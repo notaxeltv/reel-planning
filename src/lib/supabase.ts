@@ -1,10 +1,14 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { PUBLIC_SUPABASE_KEY, PUBLIC_SUPABASE_URL } from './public-config'
 
-export const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL ?? '').replace(/\/rest\/v1\/?$/, '')
+export const supabaseUrl = (
+  import.meta.env.VITE_SUPABASE_URL || PUBLIC_SUPABASE_URL
+).replace(/\/rest\/v1\/?$/, '')
+
 export const supabaseAnonKey =
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
   import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  ''
+  PUBLIC_SUPABASE_KEY
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
 

@@ -39,18 +39,21 @@ export function SetupScreen() {
     <Frame>
       <h1 className="font-display text-3xl">Manca il collegamento al cloud</h1>
       <p className="mt-3 text-sm leading-relaxed text-mute">
-        Per usare la dashboard in due, crea un progetto Supabase e un sito Vercel. I passi completi sono nel README.
+        Sul sito Vercel servono le variabili d’ambiente, non il file .env del PC. Aggiungile in Settings →
+        Environment Variables e fai Redeploy.
       </p>
       <ol className="mt-5 list-decimal space-y-2 pl-5 text-sm text-paper/90">
-        <li>Crea un progetto su supabase.com</li>
-        <li>Esegui il file supabase/schema.sql nell’SQL Editor</li>
-        <li>Copia URL e anon key in un file .env.local</li>
-        <li>Riavvia npm run dev, oppure pubblica su Vercel</li>
+        <li>
+          <code className="rounded bg-ink-2 px-1">VITE_SUPABASE_URL</code>
+        </li>
+        <li>
+          <code className="rounded bg-ink-2 px-1">VITE_SUPABASE_PUBLISHABLE_KEY</code>
+        </li>
+        <li>
+          <code className="rounded bg-ink-2 px-1">VITE_SUPABASE_ANON_KEY</code> (stessa chiave)
+        </li>
+        <li>Redeploy del progetto</li>
       </ol>
-      <p className="mt-5 text-xs leading-relaxed text-mute">
-        File da copiare: <code className="rounded bg-ink-2 px-1">.env.example</code> →{' '}
-        <code className="rounded bg-ink-2 px-1">.env.local</code>
-      </p>
     </Frame>
   )
 }
