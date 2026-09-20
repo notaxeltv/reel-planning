@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+import { AuthProvider, useAuth } from './auth'
+import { AuthScreen, DeniedScreen, SetupScreen, Splash } from './components/Access'
 import { CalendarView } from './components/CalendarView'
 import { Dashboard } from './components/Dashboard'
 import { Kanban } from './components/Kanban'
@@ -110,10 +112,29 @@ function Shell() {
   )
 }
 
-export default function App() {
+function Board() {
+  const { access } = useStore()
+  if (access === 'loading') return <Splash message="Carico il piano condiviso…" />
+  if (access === 'denied') return <DeniedScreen />
+  return <Shell />
+}
+
+function Gate() {
+  const { configured, loading, session } = useAuth()
+  if (!configured) return <SetupScreen />
+  if (loading) return <Splash message="Connessione alla board…" />
+  if (!session) return <AuthScreen />
   return (
     <StoreProvider>
-      <Shell />
+      <Board />
     </StoreProvider>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Gate />
+    </AuthProvider>
   )
 }

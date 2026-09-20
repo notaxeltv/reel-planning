@@ -4,10 +4,12 @@ import {
   Columns3,
   LayoutDashboard,
   List,
+  LogOut,
   Plus,
   Search,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { useAuth } from '../auth'
 import { useStore } from '../store'
 import type { View } from '../types'
 import { cn } from '../types'
@@ -34,7 +36,8 @@ export function Layout({
   onNew: () => void
   children: ReactNode
 }) {
-  const { reels } = useStore()
+  const { email, signOut } = useAuth()
+  const { reels, connected, error } = useStore()
   const openCount = reels.filter((reel) => reel.status !== 'published').length
 
   return (
@@ -43,7 +46,7 @@ export function Layout({
       <div className="mx-auto flex min-h-svh max-w-[1600px]">
         <aside className="sticky top-0 hidden h-svh w-[270px] shrink-0 flex-col border-r border-line/80 bg-ink-2/80 p-5 backdrop-blur md:flex">
           <div className="mb-8 flex items-center gap-3">
-            <div className="grid size-10 place-items-center rounded-xl bg-ember text-ink shadow-[0_10px_30px_rgba(226,74,43,0.35)]">
+            <div className="grid size-10 place-items-center rounded-xl bg-ember text-ink shadow-[0_10px_30px_rgba(226,58,120,0.4)]">
               <Clapperboard className="size-5" />
             </div>
             <div>
@@ -86,8 +89,30 @@ export function Layout({
               <p className="mt-1 font-display text-3xl">{openCount}</p>
               <p className="text-xs text-mute">reel aperti nel pipeline</p>
             </div>
+            <div className="rounded-2xl border border-line bg-panel p-3">
+              <div className="flex items-center gap-2 text-xs">
+                <span
+                  className={cn(
+                    'size-2 rounded-full',
+                    connected ? 'bg-sage shadow-[0_0_10px_rgba(126,217,87,0.85)]' : 'bg-mute',
+                  )}
+                />
+                <span className="text-mute">{connected ? 'In tempo reale' : 'Sincronizzo…'}</span>
+              </div>
+              <p className="mt-2 truncate text-xs text-paper/80" title={email ?? ''}>
+                {email}
+              </p>
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-mute hover:text-paper"
+              >
+                <LogOut className="size-3" />
+                Esci
+              </button>
+            </div>
             <p className="px-1 text-[11px] leading-relaxed text-mute">
-              I dati restano in questo browser. Tasto <kbd className="rounded bg-panel-2 px-1">N</kbd> per un nuovo reel.
+              Board condivisa. Tasto <kbd className="rounded bg-panel-2 px-1">N</kbd> per un nuovo reel.
             </p>
           </div>
         </aside>
@@ -103,6 +128,9 @@ export function Layout({
                 className="w-full bg-transparent text-sm outline-none placeholder:text-mute"
               />
             </div>
+            {error ? (
+              <p className="hidden max-w-[220px] text-right text-[11px] text-ember-2 sm:block">{error}</p>
+            ) : null}
             <div className="hidden text-right text-xs text-mute sm:block">
               <div className="uppercase tracking-[0.16em]">Oggi</div>
               <div className="text-paper">
@@ -116,14 +144,14 @@ export function Layout({
             <button
               type="button"
               onClick={onNew}
-              className="inline-flex items-center gap-2 rounded-full bg-ember px-4 py-2.5 text-sm font-semibold text-ink shadow-[0_8px_24px_rgba(226,74,43,0.28)] transition hover:bg-ember-2"
+              className="inline-flex items-center gap-2 rounded-full bg-ember px-4 py-2.5 text-sm font-semibold text-ink shadow-[0_8px_24px_rgba(226,58,120,0.32)] transition hover:bg-ember-2"
             >
               <Plus className="size-4" />
               Nuovo reel
             </button>
           </header>
 
-          <div className="flex gap-1 overflow-x-auto border-b border-line px-3 py-2 md:hidden">
+          <div className="flex items-center gap-1 overflow-x-auto border-b border-line px-3 py-2 md:hidden">
             {NAV.map((item) => (
               <button
                 key={item.id}
@@ -137,7 +165,15 @@ export function Layout({
                 {item.label}
               </button>
             ))}
+            <button
+              type="button"
+              onClick={() => void signOut()}
+              className="ml-auto rounded-full bg-panel px-3 py-1.5 text-xs text-mute"
+            >
+              Esci
+            </button>
           </div>
+          {error ? <p className="px-4 py-2 text-[11px] text-ember-2 md:hidden">{error}</p> : null}
 
           <main className="flex-1 px-4 py-6 md:px-8 md:py-8">{children}</main>
         </div>
